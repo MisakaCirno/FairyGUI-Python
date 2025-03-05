@@ -76,76 +76,76 @@ for package in branch.package_list:
             network_map[package.package_name] = []
         network_map[package.package_name].append(package_name)
 
-    # 绘制网络关系图
-    print("=" * 20)
-    G = nx.Graph()
+# 绘制网络关系图
+print("=" * 20)
+G = nx.Graph()
 
-    for package_name in network_map:
-        for reference_package_name in network_map[package_name]:
-            G.add_edge(package_name, reference_package_name)
+for package_name in network_map:
+    for reference_package_name in network_map[package_name]:
+        G.add_edge(package_name, reference_package_name)
 
-    # 画图
-    nx.draw(G, with_labels=True)
+# 画图
+nx.draw(G, with_labels=True)
 
-    nt = Network(
-        height="100vh",
-        width="100%",
-        directed=True,
-        notebook=False,  # 必须设置为 False 才能启用完整响应式支持
-        bgcolor="#ffffff",
-        cdn_resources="in_line"  # 内联资源，避免 CDN 依赖
+nt = Network(
+    height="100vh",
+    width="100%",
+    directed=True,
+    notebook=False,  # 必须设置为 False 才能启用完整响应式支持
+    bgcolor="#ffffff",
+    cdn_resources="in_line"  # 内联资源，避免 CDN 依赖
+)
+
+nt.toggle_physics(False)
+
+# 手动计算网格坐标
+grid_spacing = 400  # 像素间距
+
+# 按照引用数量排序，从多到少排序
+nodes = list(G.nodes())
+nodes.sort(key=lambda x: G.degree[x], reverse=True)
+
+
+for idx, node in enumerate(nodes):
+    row = idx // 20
+    col = idx % 20
+    x = col * grid_spacing
+    y = row * grid_spacing
+    nt.add_node(
+        node,
+        x=x,
+        y=y,
+        label=node,
+        font={"size": 14, "color": "#333"},  # 优化标签可读性
+        shape="box",  # 节点显示为方块
+        color="#4CAF50"
     )
 
-    nt.toggle_physics(False)
+# 设置边的样式为直线
+nt.set_edge_smooth('false')
 
-    # 手动计算网格坐标
-    grid_spacing = 400  # 像素间距
+# 添加边
+for edge in G.edges():
+    nt.add_edge(edge[0], edge[1], width=1.2, color="#666")
 
-    # 按照引用数量排序，从多到少排序
-    nodes = list(G.nodes())
-    nodes.sort(key=lambda x: G.degree[x], reverse=True)
-    
+# 生成 HTML 并注入自定义 CSS
+html_content = nt.generate_html()
 
-    for idx, node in enumerate(nodes):
-        row = idx // 20
-        col = idx % 20
-        x = col * grid_spacing
-        y = row * grid_spacing
-        nt.add_node(
-            node,
-            x=x,
-            y=y,
-            label=node,
-            font={"size": 14, "color": "#333"},  # 优化标签可读性
-            shape="box",  # 节点显示为方块
-            color="#4CAF50"
-        )
-
-    # 设置边的样式为直线
-    nt.set_edge_smooth('false')
-
-    # 添加边
-    for edge in G.edges():
-        nt.add_edge(edge[0], edge[1], width=1.2, color="#666")
-
-    # 生成 HTML 并注入自定义 CSS
-    html_content = nt.generate_html()
-
-    # 插入响应式 CSS 样式
-    css_injection = """
-    <style>
-      body { margin: 0; padding: 0; overflow: hidden; }
-      #mynetwork { 
-        width: 100vw !important; 
-        height: 100vh !important;
-      }
-    </style>
-    """
-    html_content = html_content.replace("</head>", css_injection + "</head>")
+# 插入响应式 CSS 样式
+css_injection = """
+<style>
+  body { margin: 0; padding: 0; overflow: hidden; }
+  #mynetwork { 
+    width: 100vw !important; 
+    height: 100vh !important;
+  }
+</style>
+"""
+html_content = html_content.replace("</head>", css_injection + "</head>")
 
 
-    with open("fgui_net.html", "w", encoding="utf-8") as f:
-        f.write(html_content)
+with open("fgui_net.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
 
-    print("Export network to fgui_net.html")
+print("Export network to fgui_net.html")
 ```
