@@ -1,14 +1,3 @@
-# FairyGUI-Python
-
-在Python中实现的，对于FGUI项目进行解析的代码。最多可以解析到元件的层级。
-
-未引用任何第三方库，仅使用Python自带的库。
-
-目前功能还比较简陋，但已经满足了自己的大部分需求，欢迎各位大佬提出建议和PR，一起完善这个小项目。
-
-# 示例代码
-
-``` python
 from fairy_gui import *
 
 # 加载一个FGUI项目
@@ -45,4 +34,3 @@ if resource.file_exists is False:
     print("资源文件不存在")
 else:
     print("资源文件存在于：" + resource.full_path)
-```
