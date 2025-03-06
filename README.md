@@ -1,15 +1,19 @@
-# FairyGUI-Python
+# py-fgui(Python-FairyGUI)
 
-在Python中实现的，对于FGUI项目进行解析的代码。最多可以解析到元件的层级。
+在Python中实现的，对于FGUI项目进行解析的库。可以解析到元件的层级。
 
 未引用任何第三方库，仅使用Python自带的库。
 
 目前功能还比较简陋，但已经满足了自己的大部分需求，欢迎各位大佬提出建议和PR，一起完善这个小项目。
 
-# 示例代码
+# 快速开始
+
+可以通过pip来安装：`pip install py-fgui`
+
+接下来就能拿到关键数据了：
 
 ``` python
-from fairy_gui import *
+from py_fgui import *
 
 # 加载一个FGUI项目
 fgui_file_path:str = r"D:\FGUIProject\FGUIProject.fairy"
@@ -47,19 +51,19 @@ else:
     print("资源文件存在于：" + resource.full_path)
 ```
 
-想把依赖关系可视化？试试这个：
+想把依赖关系可视化成网络图？ 试试这个：
+
 ``` python
 import networkx as nx
 from pyvis.network import Network
 
-from fairy_gui import *
+from py_fgui import *
 
 fgui_file_path:str = r"D:\FGUIProject\FGUIProject.fairy"
 project:FGUIProject = FGUIProject(fgui_file_path)
-
-# 获取项目的主分支（目前仅支持）
 branch:FGUIBranch = project.main_branch
 
+# 创建依赖关系的映射
 network_map:dict[str,list[str]] = dict()
 
 for package in branch.package_list:
